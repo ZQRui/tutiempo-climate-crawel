@@ -5,10 +5,6 @@ import argparse
 import logging
 import os
 
-argp=argparse.ArgumentParser()
-argp.add_argument("year",type=int)
-argp.add_argument("month",type=int)
-argp.add_argument("place_id",type=str)
 
 se=requests.Session()
 # se.proxies=proxies
@@ -33,7 +29,7 @@ def get_weather(year,month,place_id="548230"):
     write_data="\n".join([",".join(tr)for tr in table])
     logging.debug(write_data)
     data_dir="climate-data"
-    if os.path.isdir(data_dir):
+    if not os.path.isdir(data_dir):
         os.mkdir(data_dir)
     
     fname="{place_id}-{year:04}-{month:02}.csv".format(year=year,month=month,place_id=place_id)
@@ -42,7 +38,38 @@ def get_weather(year,month,place_id="548230"):
         fp.write(write_data)
     logging.info("Get climate data done, save in file: {}".format(fpath))
 
+argp=argparse.ArgumentParser()
+argp.add_argument("place_id",type=str)
+argp.add_argument("start_year",type=int)
+argp.add_argument("start_month",type=int)
+argp.add_argument("end_year",type=int,default=None)
+argp.add_argument("end_month",type=int,default=None)
+
 if __name__=="__main__":
     logging.basicConfig(level=logging.DEBUG)
     args=argp.parse_args()
-    get_weather(args.year,args.month,args.place_id)
+    if not (args.end_year and args.end_month):
+        get_weather(args.start_year,args.start_month,args.place_id)
+    else:
+        sy=args.start_year
+        sm=args.start_month
+        ey=args.end_year
+        em=args.end_month
+        if ey<sy:
+            logging.error("must be end > start")
+        elif ey==sy:
+            if sm<em:
+                logging.error("must be end > start")
+            else:
+                for m in range(sm,em):
+                    get_weather(sy,m,args.place_id)
+        else:
+            for m in range(sm,13):
+                get_weather(sy,m,args.place_id)
+            for y in range(sy+1,ey):
+                for m in range(1,13):
+                    get_weather(y,m,args.place_id)
+            for m in range(1,em+1):
+                get_weather(ey,m,args.place_id)
+
+        

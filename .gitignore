@@ -59,6 +59,8 @@ local_settings.py
 db.sqlite3
 
 # Flask stuff:
+climate-data/
+
 instance/
 .webassets-cache
 

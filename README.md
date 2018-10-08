@@ -5,7 +5,7 @@
 
 ## Usage
 1. install python3
-2. install python extension: `pip install -r requirements`
+2. install python extension: `pip install -r requirements.txt`
 3. run : `python climate.py 548230 2013 01 2015 02`
 4. save in csv file: the csv file is located in `climate-data` directory
 ### Command format

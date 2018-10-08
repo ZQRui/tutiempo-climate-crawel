@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import argparse
 import logging
+import os
 
 argp=argparse.ArgumentParser()
 argp.add_argument("year",type=int)
@@ -31,10 +32,15 @@ def get_weather(year,month,place_id="548230"):
     logging.debug("get climate table ok")
     write_data="\n".join([",".join(tr)for tr in table])
     logging.debug(write_data)
+    data_dir="climate-data"
+    if os.path.isdir(data_dir):
+        os.mkdir(data_dir)
+    
     fname="{place_id}-{year:04}-{month:02}.csv".format(year=year,month=month,place_id=place_id)
-    with open(fname,"w") as fp:
+    fpath=os.path.join(data_dir,fname)
+    with open(fpath,"w") as fp:
         fp.write(write_data)
-    logging.info("Get climate data done, save in file: {}".format(fname))
+    logging.info("Get climate data done, save in file: {}".format(fpath))
 
 if __name__=="__main__":
     logging.basicConfig(level=logging.DEBUG)

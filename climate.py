@@ -30,6 +30,7 @@ def get_weather(year,month,place_id="548230"):
         logging.error("climate data of: palce {} year {} month{} not exist".format(place_id,year,month))
         return 
     b2=BeautifulSoup(result2.content,"html.parser")
+    se.close()
     trs=b2.select(".mt5.minoverflow.tablancpy table tr")
     table=[[th.text for th in trs[0].select("th")],]+[[td.text.replace('\xa0','') for td in tr] for tr in trs[1:-2]]
     logging.debug("get climate table ok")
